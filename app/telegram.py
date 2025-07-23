@@ -24,9 +24,15 @@ def extract_message_info(update: Dict[str, Any]) -> Dict[str, Any]:
     message = update.get('message') or update.get('edited_message')
     if not message:
         return {}
+    user = message['from']
+    user_name = user.get('username')
+    if not user_name:
+        # Fallback to first_name + last_name if username not present
+        user_name = (user.get('first_name', '') + ' ' + user.get('last_name', '')).strip() or None
     return {
         'chat_id': message['chat']['id'],
-        'user_id': message['from']['id'],
+        'user_id': str(user['id']),
+        'user_name': user_name,
         'text': message.get('text', ''),
         'message_id': message['message_id']
     } 
